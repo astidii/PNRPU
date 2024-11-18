@@ -1,0 +1,168 @@
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string path = "file.txt";
+        int[,] matrix = new int[6, 6];
+
+        // Чтение матрицы из файла
+        try
+        {
+            string[] data = File.ReadAllLines(path);
+            for (int i = 0; i < data.Length; i++)
+            {
+                string[] numbers = data[i].Split(' ');
+                for (int j = 0; j < data.Length; j++)
+                {
+                    matrix[i, j] = int.Parse(numbers[j]);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка чтения файла: {ex.Message}");
+            return;
+        }
+
+        // Вывод матрицы
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                Console.Write(matrix[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+
+        // Проверка свойств
+        ReflexivityCheck(matrix);
+        AntireflexivityCheck(matrix);
+        SymmetryCheck(matrix);
+        AntisymmetryCheck(matrix);
+        AsymmetryCheck(matrix);
+        TransitivityCheck(matrix);
+        ConnectivityCheck(matrix);
+    }
+
+    static void ReflexivityCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            if (matrix[i, i] != 1)
+            {
+                Console.WriteLine("Рефлексивность -");
+                return;
+            }
+        }
+        Console.WriteLine("Рефлексивность +");
+    }
+
+    static void AntireflexivityCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            if (matrix[i, i] != 0)
+            {
+                Console.WriteLine("Антирефлексивность -");
+                return;
+            }
+        }
+        Console.WriteLine("Антирефлексивность +");
+    }
+
+    static void SymmetryCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if (matrix[i, j] != matrix[j, i])
+                {
+                    Console.WriteLine("Симметричность -");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine("Симметричность +");
+    }
+
+    static void AntisymmetryCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if (i != j && matrix[i, j] == 1 && matrix[j, i] == 1)
+                {
+                    Console.WriteLine("Антисимметричность -");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine("Антисимметричность +");
+    }
+
+    static void AsymmetryCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            if (matrix[i, i] != 0)
+            {
+                Console.WriteLine("Асимметричность -");
+                return;
+            }
+
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if (matrix[i, j] == 1 && matrix[j, i] == 1)
+                {
+                    Console.WriteLine("Асимметричность -");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine("Асимметричность +");
+    }
+
+    static void TransitivityCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if (matrix[i, j] == 1)
+                {
+                    for (int k = 0; k < matrix.GetLength(1); k++)
+                    {
+                        if (matrix[j, k] == 1 && matrix[i, k] != 1)
+                        {
+                            Console.WriteLine("Транзитивность -");
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        Console.WriteLine("Транзитивность +");
+    }
+
+    static void ConnectivityCheck(int[,] matrix)
+    {
+        for (int i = 0; i < matrix.GetLength(0); i++)
+        {
+            for (int j = 0; j < matrix.GetLength(1); j++)
+            {
+                if (i != j && matrix[i, j] == 0 && matrix[j, i] == 0)
+                {
+                    Console.WriteLine("Связность -");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine("Связность +");
+    }
+}
+
