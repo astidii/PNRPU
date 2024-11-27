@@ -1,0 +1,31 @@
+#include <iostream>
+#include <stdarg.h>
+using namespace std;
+
+int triangle (int n, ...) {
+	int sum = 0;				//Счетчик количества возможны треугольников
+	va_list ptr;                //Указатель на элемент списка 
+	va_start(ptr, n);			//Задает указатель ptr на элемент списка
+	int x = va_arg(ptr, int);		//Первые три передаваемых элемента
+	int y = va_arg(ptr, int);
+	int z = va_arg(ptr, int);
+	
+	for (int i = 2; i < n; ++i) {
+		if ((x + y > z) && (x + z > y) && (z + y > x)) { //Проверка на существование треугольника
+			sum += 1;
+		}
+		x = y;					//Каждой стороне треуголника придаем значение следующей
+		y = z;
+		z = va_arg(ptr, int);
+	}
+
+	va_end(ptr);
+	return sum;
+}
+
+int main() {
+	cout << "The number of possible triangles: " << triangle(3, 5, 6, 17) << endl;
+	cout << "The number of possible triangles: " << triangle(9, 1, 2, 1, 5, 7, 4, 12, 8, 3) << endl;
+	cout << "The number of possible triangles: " << triangle(11, 5, 5, 5, 6, 9, 13, 12, 15, 20, 40, 50) << endl;
+	return 0;
+}
