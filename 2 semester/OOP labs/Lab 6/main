@@ -1,0 +1,19 @@
+#include "List.h"
+
+int main() {
+
+	List list1;
+	cin >> list1;
+	cout << list1;
+
+	List list2;
+	cin >> list2;
+	cout << list2;
+
+	cout << "list1 * list2 = " << list1 * list2 << endl;
+
+	cout << "list1[1] = " << list1[1] << endl;;
+
+	list1.pop_back();
+	cout << "list1.pop_back() -> " << list1;
+}
