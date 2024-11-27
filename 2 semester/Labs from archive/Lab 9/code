@@ -1,0 +1,61 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+int main() {
+	ifstream file1("C:\\Users\\dimol\\OneDrive\\Рабочий стол\\F1.txt");
+	ofstream file2("C:\\Users\\dimol\\OneDrive\\Рабочий стол\\F2.txt");
+
+	string arr[10];	//массив для слов
+	string str;
+	string word;
+	int c = 0;   //Нужна для определения какой индекс в массиве будет у слова
+	int word_count, vowel = 0;   //счетчик слов(считает кол-во стррок в каждой строке) и гласных букв
+
+	while (!file1.eof()) {      //программа работает пока не достиг конец файла
+		word_count = 0;			//обнуляем счетчик для каждой новой строки
+		getline(file1, str);     //считываем из файла построчно
+		for (int i = 0; i <= str.length(); i++) {   //Проходимся по каждому символу строки
+			if (str[i] != ' ' && str[i] != '\0') {	//Пока не достигнут пробел или нуль-терминатор формируем слово
+				word += str[i];
+			}
+			else {									
+				arr[c] = word;						//Добавляем слово в массив
+				word = "";							//Обновляем переменную слова
+				word_count += 1;					//Счетчик слов увеличиваем
+				c += 1;								//Увеличиваем индекс для следующего слова
+			}
+		}
+		int flag = 0;								//Флажок, который проверяет есть ли повторяющиеся слова
+		for (int i = 0; i < word_count; i++) {
+			for (int j = i + 1; j < word_count; j++) {		//Переменная изменятеся до количества слов, чтобы не брать лишние пробелы в массиве 
+				if (arr[i] == arr[j]) {
+					flag = 1;
+				}
+			}
+		}
+		if (flag == 1) {  //Если есть повторения то строка копируется во второй файл и в ней счтитается кол-во гласных
+			file2 << str << endl;
+			for (int i = 0; i <= str.length(); i++) {
+				if (str[i] == 'a' || str[i] == 'e' || str[i] == 'y' || str[i] == 'u' || str[i] == 'o') {
+					vowel += 1;
+				}
+			}
+			flag = 0;
+			cout << vowel << endl;
+			vowel = 0;
+		}
+		else {
+			flag = 0;
+		}
+		c = 0;
+
+	}
+
+	file1.close();
+	file2.close();
+	
+	return 0;
+}
+
+
