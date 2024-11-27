@@ -1,0 +1,19 @@
+#include "oop7.h"
+
+int main()
+{
+	List<int> intList;
+	List<double> dList;
+	List<Pair> pList;
+
+	cin >> intList;
+	cout << "Integer List: " << intList << endl;
+
+	cin >> dList;
+	cout << "Double List: " << dList << endl;
+
+	cin >> pList;
+	cout << "Pair List: " << pList << endl;
+
+return 0;
+}
