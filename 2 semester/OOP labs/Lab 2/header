@@ -1,0 +1,58 @@
+#pragma once
+#include iostream
+#include string
+
+using namespace std;
+
+class Salary {
+	string name;
+	double salary;
+	int prize;
+
+public
+	Salary() {
+		name = Ivan Ivanov;
+		salary = 0;
+		prize = 0;
+	};
+
+	Salary(string p_name, double p_salary, int p_prize) {
+		name = p_name;
+		salary = p_salary;
+		prize = p_prize;
+	};
+
+	Salary(const Salary&);
+
+	~Salary() {
+		cout  Вызов деструктора  endl;
+	}
+	
+	void setName(string p_name) {
+		name = p_name;
+	}
+
+	string getName() {
+		return name;
+	}
+
+	void setSalary(double p_salary) {
+		salary = p_salary;
+	}
+
+	double getSalary() {
+		return salary;
+	}
+
+	void setPrize(int p_prize) {
+		prize = p_prize;
+	}
+
+	int getPrize() {
+		return prize;
+	}
+
+	void print() {
+		cout  Имя   name  endl  Зарплата   salary  endl  Премия(% от оклада)   prize  endl  endl;
+	}
+};
