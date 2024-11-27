@@ -1,0 +1,40 @@
+// aj = a0 * r^j 
+//double first = a0 - это первый член прогрессии
+//int second = r - это постоянное отношение r
+#pragma once
+#include <iostream>
+
+using namespace std;
+
+class Progression
+{
+public:
+
+	double zeroElement;
+	int r;
+
+	Progression(double first, int second) {
+		cout << "Конструктор класса Progression" << endl;
+		this->zeroElement = first;
+		this->r = second;
+	}
+
+	double element(int j) {
+		if (j == 0) {
+			return zeroElement;
+		}
+		else {
+			return zeroElement * pow(r, j);
+		}
+	}
+
+private:
+
+	int pow(int r, int power) {
+		int result = r;
+		for (int i = 1; i < power; i++) {
+			result *= r;
+		}
+		return result;
+	}
+};
