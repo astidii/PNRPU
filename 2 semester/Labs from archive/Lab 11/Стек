@@ -1,0 +1,178 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+using namespace std;
+
+template <typename T>
+struct Node
+{
+    T data;
+    Node<T>* next_ptr;
+};
+
+template <typename T>
+struct Stack
+{
+    Node<T>* head;
+    int size;
+};
+
+// Функция, которая устанавливает поля по умолчанию узлу
+template <typename T>
+void SetNode(Node<T>*& node, T data, Node<T>* next_ptr = nullptr)
+{
+    node = new Node<T>();
+    node->next_ptr = next_ptr;
+    node->data = data;
+}
+
+// Функция, которая инициализирует поля стека базовыми значениями
+template <typename T>
+void SetStack(Stack<T>& tmp)
+{
+    tmp.head = nullptr;
+    tmp.size = 0;
+}
+
+// Функция добавления 
+template <typename T>
+void Push(Stack <T>& tmp, const T& data)
+{
+    // Создается новый узел
+    Node<T>* new_node;
+    SetNode(new_node, data, tmp.head);
+    tmp.head = new_node;
+    tmp.size++;
+}
+
+// Функция удаления
+template <typename T>
+void pop(Stack <T>& stack, const T& data)
+{
+    if (stack.head == nullptr)
+        return;
+
+    Node<T>* temp = stack.head;
+    stack.head = temp->next_ptr;
+    delete temp;
+    stack.size--;
+}
+
+// Функция печати
+template <typename T>
+void print(Stack<T>& stack) {
+    if (stack.head == nullptr) {
+        cout << "Stack is empty" << endl;
+        return;
+    }
+    Node<T>* current_node = stack.head;
+    while (current_node != nullptr) {
+        cout << current_node->data << " ";
+        current_node = current_node->next_ptr;
+    }
+    cout << endl;
+}
+
+// Функция очистки стека
+template <typename T>
+void clear(Stack<T>& stack) {
+    Node<T>* current_node = stack.head;
+    while (current_node != nullptr) {
+        Node<T>* temp = current_node;
+        current_node = current_node->next_ptr;
+        delete temp;
+    }
+    stack.head = nullptr;
+    stack.size = 0;
+}
+
+// Функция для перемещения элементов в дополнительный Стек
+template <typename T>
+void moveAllToHelpStack(Stack<T>& stack, Stack<T>& helpStack) {
+    Node<T>* current_node = stack.head;
+    while (current_node != nullptr) {
+        Push(helpStack, current_node->data); // Исправлено
+        current_node = current_node->next_ptr; // Сдвиг на следующий узел
+    }
+    clear(stack);
+    stack.size = 0; // Уменьшение размера main_stack
+    cout << "-----------------------------------------" << endl;
+    cout << "Data Move" << endl;
+    cout << "-----------------------------------------" << endl;
+}
+
+template <typename T>
+void moveSeveral(Stack<T>& stack, Stack<T>& helpStack, string data)
+{
+    Node<T>* current_node = stack.head;
+    while (current_node->data != data) {
+        Node<T>* temp = current_node;
+        Push(helpStack, current_node->data);
+        current_node = current_node->next_ptr; 
+        stack.head = stack.head->next_ptr;
+        delete temp;
+        stack.size--;
+    }
+    
+    cout << "-----------------------------------------" << endl;
+    cout << "Data Move" << endl;
+    cout << "-----------------------------------------" << endl;
+}
+
+int main() {
+    // Инициализация
+    Stack<string> main_stack;
+    Stack<string> helpStack;
+    SetStack(main_stack);
+    SetStack(helpStack);
+    int numberStack, k;
+    string data;
+    // Количество начальных элементов
+
+    cout << "Number of elements: ";
+    cin >> numberStack;
+
+    for (int i = 0; i < numberStack; i++) {
+        cout << "Input element: ";
+        cin >> data;
+        Push(main_stack, data);
+    }
+
+    cout << "Stack: ";
+    print(main_stack);
+
+    cout << endl;
+
+    moveAllToHelpStack(main_stack, helpStack);
+
+    print(main_stack);
+    cout << endl;
+
+    cout << "Number k = ";
+    cin >> k;
+
+    for (int i = 0; i < k; i++) {
+        cout << "Data: ";
+        cin >> data;
+        Push(main_stack, data);
+    }
+
+    moveAllToHelpStack(helpStack, main_stack);
+
+    for (int i = 0; i < k; i++) {
+        cout << "Data: ";
+        cin >> data;
+        Push(main_stack, data);
+    }
+
+    print(main_stack);
+    cout << endl;
+    cout << "-----------------------------------------" << endl;
+
+    cout << "Delete element: ";
+    cin >> data;
+    moveSeveral(main_stack, helpStack, data);
+    print(helpStack);
+    clear(main_stack);
+    clear(helpStack);
+}
