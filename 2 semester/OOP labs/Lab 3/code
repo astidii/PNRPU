@@ -1,0 +1,80 @@
+#include <iostream>
+using namespace std;
+
+class  Pair {
+	int x;
+	double y;
+
+public:
+	Pair() {
+		this->x = 0;
+		this->y = 0;
+	}
+
+	Pair(int x, double y) {
+		this->x = x;
+		this->y = y;
+	}
+
+	Pair(const Pair& other) {
+		this->x = other.x;
+		this->y = other.y;
+	}
+
+
+	~Pair() {}
+
+	Pair operator+(const int& x) {
+		return Pair(this->x + x, this->y);
+	}
+
+	Pair operator+(const double& y) {
+		return Pair(this->x, this->y + y);
+	}
+
+	Pair operator-(const Pair& p) {
+		return Pair(this->x - p.x, this->y - p.y);
+	}
+
+	Pair operator=(const Pair& p) {
+		this->x = p.x;
+		this->y = p.y;
+		return *this;
+	}
+
+	friend ostream& operator<<(ostream& stream, const Pair& p) {
+		stream << '(' << p.x << ":" << p.y << ')' << endl;
+		return stream;
+	}
+
+	friend istream& operator>>(istream& stream, Pair& p) {
+		cout << "Введите x: ";
+		stream >> p.x;
+		cout << "Введите y: ";
+		stream >> p.y;
+		return stream;
+	}
+};
+
+int main() {
+
+	system("chcp 1251 > Null");
+
+	Pair a(5, 1);
+	cout << "a = " << a;
+	cout << "a + 5 = " << a + 5;
+
+	Pair b;
+	cin >> b;
+
+	cout << "b = " << b;
+
+	Pair c;
+	c = b;
+	cout << "c = " << c;
+
+	c = b - a;
+	cout << "c = " << c;
+
+	return 0;
+}
