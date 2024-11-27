@@ -1,0 +1,330 @@
+#include <iostream> 
+#include <map>
+#include <algorithm>
+#include <random>
+#include <ctime>
+
+using namespace std;
+
+class Pair {
+
+    int firstNum;
+    double secondNum;
+
+public:
+
+    Pair() {
+
+        firstNum = 0;
+        secondNum = 0;
+    }
+
+    Pair(int firstOfNums, double secondOfNums) {
+
+        firstNum = firstOfNums;
+        secondNum = secondOfNums;
+    }
+
+    Pair(const Pair& someNum) {
+
+        firstNum = someNum.firstNum;
+        secondNum = someNum.secondNum;
+    }
+
+    ~Pair() {}
+
+    void Print() { cout << firstNum << " : " << secondNum; }
+
+    Pair operator+(const Pair& other) const {
+
+        Pair result;
+
+        result.firstNum = firstNum + other.firstNum;
+        result.secondNum = secondNum + other.secondNum;
+
+        return result;
+    }
+
+    void operator-(const Pair& number) {
+
+        firstNum -= number.firstNum;
+        secondNum -= number.secondNum;
+    }
+
+    void setFirst(int num) { firstNum = num; }
+    void setSecond(double num) { secondNum = num; }
+
+    int getFirst() const { return firstNum; }
+    double getSecond() const { return secondNum; }
+
+    void operator=(const Pair& number) {
+
+        firstNum = number.firstNum;
+        secondNum = number.secondNum;
+    }
+
+    friend ostream& operator<<(ostream& stream, const Pair& p);
+    friend istream& operator>>(istream& stream, Pair& p);
+
+    bool operator>(const Pair& p) const { return firstNum > p.firstNum; }
+    bool operator<(const Pair& p) const { return firstNum < p.firstNum; }
+
+    bool operator>=(const Pair& other) const {
+
+        if (firstNum > other.firstNum)
+
+            return true;
+
+        else if (firstNum < other.firstNum)
+
+            return false;
+
+        return secondNum >= other.secondNum;
+    }
+
+    bool operator<=(const Pair& other) const {
+
+        if (firstNum < other.firstNum) return true;
+
+        else if (firstNum > other.firstNum) return false;
+
+        return secondNum <= other.secondNum;
+    }
+
+    void operator/(const int& x) {
+
+        firstNum /= x;
+        secondNum /= x;
+    }
+
+    bool operator==(const Pair& p) const { return (firstNum == p.firstNum) && (secondNum == p.secondNum); }
+};
+
+ostream& operator<<(ostream& stream, const Pair& p) {
+
+    stream << "(" << p.firstNum << " : " << p.secondNum << ")";
+
+    return stream;
+
+}
+
+istream& operator>>(istream& stream, Pair& p) {
+
+    stream >> p.firstNum >> p.secondNum;
+
+    return stream;
+
+}
+
+void randomize(Pair& p) {
+
+    int x = rand() % 1001;
+    double y = (rand() % 100001) * 0.01;
+
+    p = Pair(x, y);
+}
+
+void generateM(map<Pair, Pair>& myM, int mSize) {
+
+    Pair qwe1(0, 0), qwe2(0, 0);
+
+    for (int i = 0; i < mSize; i++) {
+
+        randomize(qwe1);
+        randomize(qwe2);
+
+        myM[qwe1] = qwe2;
+    }
+}
+
+ostream& operator<<(ostream& stream, const pair<Pair, Pair> p) {
+
+    stream << "Ключ: " << p.first << "  \tЗначение: " << p.second << endl;
+
+    return stream;
+}
+
+ostream& operator<<(ostream& stream, const map<Pair, Pair>& myM) {
+
+    for (auto Iter = myM.begin(); Iter != myM.end(); ++Iter) {
+
+        stream << *Iter;
+    }
+    return stream;
+}
+
+bool isInRange(const Pair& key, const Pair& lower, const Pair& upper) { return key >= lower && key <= upper; }
+
+void removeFromRange(map<Pair, Pair>& myM, const Pair& range1, const Pair& range2) {
+
+    auto Iter = myM.begin();
+
+    while (Iter != myM.end()) {
+
+        const Pair& ptr = Iter->first;
+
+        if (!isInRange(ptr, range1, range2)) {
+
+            ++Iter;
+        }
+
+        else {
+
+            Iter = myM.erase(Iter);
+        }
+    }
+}
+
+Pair minPair(map<Pair, Pair>& myM) {
+
+    auto iter = myM.begin();
+
+    Pair ptr;
+
+    ptr = iter->first;
+
+    return ptr;
+}
+
+Pair maxPair(map<Pair, Pair>& myM) {
+
+    auto iter = myM.begin();
+
+    Pair ptr;
+
+    while (iter != myM.end()) {
+
+        ptr = iter->first;
+        iter++;
+    }
+
+    return ptr;
+}
+
+void allSum(map<Pair, Pair>& myM, Pair& key, Pair& value) {
+
+    for (const auto& pair : myM) {
+
+        Pair user = pair.first;
+
+        key = key + user;
+
+        user = pair.second;
+
+        value = value + user;
+    }
+}
+
+map<Pair, Pair> addToAll(map<Pair, Pair>& myM, Pair& key, Pair& value) {
+
+    map<Pair, Pair> ptr;
+
+    for (const auto& pair : myM) {
+
+        Pair pair1 = pair.first;
+        Pair pair2 = pair.second;
+
+        ptr[pair1 + key] = (pair2 + value);
+    }
+
+    return ptr;
+}
+
+bool findPair(map<Pair, Pair>& myM, Pair& key, Pair& value) {
+
+    auto iter = myM.find(key);
+
+    if (iter != myM.end()) {
+
+        value = Pair(iter->second);
+
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+int main() {
+
+    system("chcp 1251 > Null");
+    srand(time(0));
+
+    int mapSize;
+
+    do {
+
+        cout << "Введите размер словаря: "; cin >> mapSize;
+
+    } while (mapSize < 1);
+
+    Pair sum1(0, 0), sum2(0, 0), sumOfKey(0, 0), sumOfValue(0, 0);
+
+    map<Pair, Pair> workMap;
+
+    generateM(workMap, mapSize);
+
+    cout << "\nСловарь\n\n" << workMap << endl;
+
+    allSum(workMap, sum1, sum2);
+
+    sum1 / workMap.size();
+    sum2 / workMap.size();
+
+    cout << "\nСредне арифметическое ключей: " << sum1 << endl << endl << "Средне арифметическое значений: " << sum2 << endl;
+
+    workMap[sum1] = sum2;
+
+    cout << "\nПосле добавления средне арифметического\n\n" << workMap << endl;
+
+    Pair oneEl, twoEl;
+
+    cout << "\nВведите две пары чисел, из диапазона которых будут удалены пары словаря\n";
+
+    cout << "\nПервая пара: "; cin >> oneEl;
+    cout << "\nВторая пара: "; cin >> twoEl;
+
+    if (oneEl > twoEl) { swap(oneEl, twoEl); }
+
+    removeFromRange(workMap, oneEl, twoEl);
+
+    cout << "\nПосле удаления из диапазона\n\n" << workMap << endl;
+
+    Pair maxEl = maxPair(workMap);
+    Pair minEl = minPair(workMap);
+
+    findPair(workMap, minEl, sum1);
+    findPair(workMap, maxEl, sum2);
+
+    cout << "\nМинимальный элемент по ключу: " << minEl << endl;
+    cout << "Ключ: " << minEl << "\tЗначение: " << sum1 << endl;
+
+    cout << "\nМаксимальный элемент по ключу: " << maxEl << endl;
+    cout << "Ключ: " << maxEl << "\tЗначение: " << sum2 << endl;
+
+    sumOfKey = minEl + maxEl;
+
+    sumOfValue = sum1 + sum2;
+
+    cout << "\nСумма max и min элементов\n\n" << "Ключ: " << sumOfKey << "\tЗначение: " << sumOfValue << endl;
+
+    workMap = addToAll(workMap, sumOfKey, sumOfValue);
+
+    cout << "\nПосле добавления суммы max и min к каждой паре\n\n" << workMap << endl;
+
+    cout << "\nВведите ключ, по которому надо найти пару: "; cin >> oneEl;
+
+    bool findTo = findPair(workMap, oneEl, twoEl);
+
+    if (findTo) {
+
+        cout << "\nЭлемент найден\n\n" << "Ключ: " << oneEl << "\tЗначение: " << twoEl << endl;
+    }
+
+    else {
+
+        cout << "\nЭлемент не найден.";
+    }
+
+    return 0;
+}
