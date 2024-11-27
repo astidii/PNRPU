@@ -1,0 +1,146 @@
+#include <iostream>
+#include <fstream>
+#include <clocale>
+
+
+using namespace std;
+
+// Пример структуры
+struct State {
+    char name[20];
+    char language[20];
+    char money[20];
+    double mdollar;
+};
+
+// Функция для добавления элементов структуры в файл
+void addPersonsToFile(const char* filename, int numStates) {
+    // Открываем файл для добавления данных в бинарном режиме (режим добавления)
+    ofstream outFile(filename, ios::binary | ios::app);
+
+    if (!outFile) {
+        cerr << "Не удалось открыть файл для добавления данных." << endl;
+        return;
+    }
+
+    for (int i = 0; i < numStates; ++i) {
+        // Создаем экземпляр структуры для ввода данных
+        State state;
+
+        // Запрашиваем у пользователя ввод данных для каждого элемента
+        cout << "Введите название страны: ";
+        cin.getline(state.name, 20);
+
+        cout << "Введите государственный язык: ";
+        cin.getline(state.language, 20);
+
+        cout << "Введите денежную еденицу: ";
+        cin.getline(state.money, 20);
+
+        cout << "введите курс валюты относительно $: ";
+        cin >> state.mdollar;
+
+        // Очищаем буфер ввода перед следующей итерацией
+        cin.ignore();
+
+        // Записываем структуру в файл
+        outFile.write(reinterpret_cast<char*>(&state), sizeof(state));
+    }
+
+    // Закрываем файл
+    outFile.close();
+
+    cout << "Данные успешно добавлены в файл." << endl;
+}
+
+// Функция для чтения данных из файла и вывода их на экран
+void readPersonsFromFile(const char* filename) {
+    // Открываем файл для чтения в бинарном режиме
+    ifstream inFile(filename, ios::binary);
+
+    if (!inFile) {
+        cerr << "Не удалось открыть файл для чтения." << endl;
+        return;
+    }
+
+    // Считываем данные из файла до тех пор, пока не достигнем его конца
+    while (inFile.peek() != EOF) {
+        // Создаем экземпляр структуры для хранения данных из файла
+        State state;
+
+        // Читаем данные из файла в структуру
+        inFile.read(reinterpret_cast<char*>(&state), sizeof(state));
+
+        // Выводим прочитанные данные на экран
+        cout << "Название страны: " << state.name << endl;
+        cout << "Государственный язык: " << state.language << endl;
+        cout << "Денежная единица: " << state.money << endl;
+        cout << "Курс валюты относительно доллара: " << state.mdollar << endl;
+        cout << endl;
+    }
+
+    // Закрываем файл
+    inFile.close();
+}
+
+void delPersonFromFile(const char* filename, string delname) {
+    ifstream inFile(filename, ios::binary);
+
+    if (!inFile) {
+        cerr << "Не удалось открыть файл для чтения." << endl;
+        return;
+    }
+
+    ofstream newFile("delname.dat", ios::binary);
+
+    if (!newFile) {
+        cerr << "Не удалось открыть файл для чтения." << endl;
+        return;
+    }
+
+    // Создаем экземпляр структуры для хранения данных из файла
+    State state;
+
+    while (inFile.peek() != EOF) {
+        // Читаем данные из файла в структуру
+        inFile.read(reinterpret_cast<char*>(&state), sizeof(state));
+
+        if (delname != state.name) {
+            newFile.write(reinterpret_cast<char*>(&state), sizeof(state));
+        }
+    }
+
+    inFile.close();
+    newFile.close();
+
+    remove(filename);
+
+   
+    rename("delname.dat", filename);
+        
+ }
+
+int main() {
+    setlocale(LC_ALL, "ru");
+    int numStates;
+    string delName;
+    cout << "Сколько элементов структуры вы хотите добавить в файл? ";
+    cin >> numStates;
+
+    // Очищаем буфер ввода перед вызовом функции
+    cin.ignore();
+
+    addPersonsToFile("person2.dat", numStates);
+
+    cout << endl << "Данные, сохраненные в файле:" << endl;
+    readPersonsFromFile("person2.dat");
+
+    cout << "Кого удаляем? ";
+    cin >> delName;
+    delPersonFromFile("person2.dat", delName);
+
+    cout << endl << "Данные, сохраненные в файле:" << endl;
+    readPersonsFromFile("person2.dat");
+
+    return 0;
+}
