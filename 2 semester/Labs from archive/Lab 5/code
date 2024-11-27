@@ -1,0 +1,72 @@
+#include <iostream>
+#include <clocale>
+#include <ctime>
+using namespace std;
+
+void ScanArray(int arr[][20], int m, int n) 
+{
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			arr[i][j] = rand() % 100;
+		}
+	}
+}
+
+void PrintArray(int arr[][20], int m, int n) 
+{
+	for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++) {
+			cout << arr[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void SearchUniqueMin(int array[][20], int rows, int cols) {
+	const int maxValue = 101;
+	int count[maxValue] = { 0 };
+
+	// Подсчет количество каждого элемента
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			count[array[i][j]]++;
+		}
+	}
+
+	int minUnique = maxValue; 
+
+	// Проверка элементов массива на уникальность и минимальность
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			if (count[array[i][j]] == 1 && array[i][j] < minUnique) {
+				minUnique = array[i][j];
+			}
+		}
+	}
+
+	// Проверка, найден ли уникальный элемент
+	if (minUnique == maxValue) {
+		cout << "Уникальных элементов нет." << endl;
+	}
+	else {
+		cout << "Минимальный из неповторяющихся элементов: " << minUnique << endl;
+	}
+}
+
+
+int main() {
+	srand(time(0));
+	setlocale(LC_ALL, "ru");
+	int Arr[20][20], M, N;
+
+	cout << "Кол - во строк: ";
+	cin >> M;
+	cout << "Кол-во столбцов: ";
+	cin >> N;
+
+	ScanArray(Arr, M, N);
+	PrintArray(Arr, M, N);
+	SearchUniqueMin(Arr, M, N);
+	
+	return 0;
+}
