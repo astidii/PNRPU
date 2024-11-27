@@ -1,0 +1,242 @@
+#pragma once
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class Pair
+{
+private:
+	int first;
+	double second;
+
+public:
+
+	Pair() {
+		first = 0;
+		second = 0;
+	}
+
+	Pair(int first, double second) {
+		this->first = first;
+		this->second = second;
+	}
+
+	Pair(const Pair& p) {
+		first = p.first;
+		second = p.second;
+	}
+
+	Pair operator = (const Pair& p) {
+		if (&p == this) return *this;
+		first = p.first;
+		second = p.second;
+		return *this;
+	}
+
+	~Pair() {}
+
+	friend ostream& operator<<(ostream& stream, const Pair& p) {
+		stream << '(' << p.first << ":" << p.second << ')' << endl;
+		return stream;
+	}
+
+	friend istream& operator>>(istream& stream, Pair& p) {
+		cout << "Введите первое число: ";
+		stream >> p.first;
+		cout << "Введите второе число: ";
+		stream >> p.second;
+		return stream;
+	}
+
+	Pair operator+(const int& x) {
+		return Pair(this->first + x, this->second);
+	}
+
+	Pair operator+(const double& y) {
+		return Pair(this->first, this->second + y);
+	}
+
+	Pair operator-(const Pair& p) {
+		return Pair(this->first - p.first, this->second - p.second);
+	}
+
+	//Функции для сохранения файлов в классе
+	friend fstream& operator>>(fstream& fin, Pair& p)
+	{
+		fin >> p.first;
+		fin >> p.second;
+		return fin;
+	}
+	friend fstream& operator<<(fstream& fout, const Pair& p)
+	{
+		fout << p.first << "\n" << p.second << "\n";
+		return fout;
+	}
+};
+
+
+// Работа файлов
+int make_file(const char* f_name)
+{
+	fstream stream(f_name, ios::out | ios::trunc);
+	if (!stream) return - 1;
+	int n;
+	Pair p;
+	cout << "Введите кол-во элементов для добавления в файл: ";
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		cin >> p;
+		stream << p << "\n";
+	}
+	stream.close();
+	return n;
+}
+
+// Чтение объектов из потока
+int print_file(const char* f_name)
+{
+	fstream stream(f_name, ios::in);
+	if (!stream) return -1;
+	Pair p; int i = 0;
+	while (stream >> p)
+	{
+		cout << p << "\n";
+		i++;
+	}
+	stream.close();
+	return i;
+}
+
+//Удаление объектов из потока
+int del_file(const char* f_name, int k)
+{
+	fstream temp("temp", ios::out);
+	fstream stream(f_name, ios::in);
+	if (!stream) return -1;
+	int i = 0; Pair p;
+	while (stream >> p)
+	{
+		if (stream.eof()) break;
+		i++;
+		if (i != k) temp << p;
+	}
+	stream.close(); temp.close();
+	remove(f_name);
+	rename("temp", f_name);
+	return i;
+}
+
+int add_file(const char* f_name, int k, Pair pp)
+{
+	fstream temp("temp", ios::out);
+	fstream stream(f_name, ios::in);
+	if (!stream)return -1;
+	Pair p; int i = 0, l = 0;
+	while (stream >> p)
+	{
+		if (stream.eof()) break;
+		i++;
+		if (i == k)
+		{
+			temp << pp;
+			l++;
+		}
+		temp << p;
+	}
+	stream.close(); temp.close();
+	remove(f_name);
+	rename("temp", f_name);
+	return l; // количество добавлений
+}
+
+int add_end(const char* f_name, Pair p)
+{
+	fstream stream(f_name, ios::app);
+	if (!stream) return -1;
+	stream << p;
+	return 1;
+} 
+
+int change_file(const char* f_name, int k, Pair pp)
+{
+	fstream temp("temp", ios::out);
+	fstream stream(f_name, ios::in);
+	if (!stream)return -1;
+	Pair p; int i = 0, l = 0;
+	char x;
+	while (stream >> p)
+	{
+		if (stream.eof()) break;
+		i++;
+		if (i == k)
+		{
+			cout << p << " - is changing... Continue[y/n]?\n";
+			cin >> x;
+			if (x == 'n' || x == 'N') break;
+			temp << pp;
+			l++;
+		}
+		else temp << p;
+	}
+	stream.close(); temp.close();
+	remove(f_name);
+	rename("temp", f_name);
+	return l;
+}
+
+int main() {
+	system("chcp 1251 > Null");
+
+	Pair p, p1, p2;
+	int k, c;
+	char file_name[30];
+	do
+	{
+		cout << "\n1. Make file";
+		cout << "\n2. Print file";
+		cout << "\n3. Delete record from file";
+		cout << "\n4. Add record to file";
+		cout << "\n5. Change record in file";
+		cout << "\n0. Exit\n";
+		cin >> c;
+
+		switch (c)
+		{
+		case 1: cout << "file name?"; cin >> file_name;
+			k = make_file(file_name);
+			if (k < 0) cout << "Can`t make file;";
+			break;
+
+		case 2: cout << "file name?"; cin >> file_name;
+			k = print_file(file_name);
+			if (k == 0)cout << "Empty file\n";
+			if (k < 0)cout << "Can`t read file\n";
+			break;
+
+		case 3: cout << "file name?"; cin >> file_name;
+			int nom; cout << "nom?"; cin >> nom;
+			k = del_file(file_name, nom);
+			if (k < 0) cout << "Can`t read file";
+			break;
+
+		case 4: cout << "file name?"; cin >> file_name;
+			cout << "nom?"; cin >> nom;
+			cout << "New Pair: ";
+			cin >> p1;
+			k = add_file(file_name, nom, p1);
+			if (k < 0) cout << "Can`t read file";
+			if (k == 0) k = add_end(file_name, p1);
+			break;
+
+		case 5: cout << "file name?"; cin >> file_name;
+			cout << "nom?"; cin >> nom;
+			cout << "New pair: ";
+			cin >> p2;
+			k = change_file(file_name, nom, p2);
+			if (k < 0)cout << "\nCan`t read file";
+			if (k == 0) cout << "\nNot such record";
+			break;
+		}
+	} while (c != 0);
+}
+
