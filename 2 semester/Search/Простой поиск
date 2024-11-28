@@ -1,0 +1,47 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int simpleSearch(string str, string substr);
+
+int main() {
+	system("chcp 1251 > Null");
+
+	int result;
+	string str;
+	string substr;
+
+	cout << "Введите строку: ";
+	getline(cin, str);
+
+	cout << "Введите подстроку: ";
+	getline(cin, substr);
+
+	result = simpleSearch(str, substr);
+
+	if (result != -1) {
+		cout << "Первое вхождение подстроки: " << result;
+	}
+	else {
+		cout << "Подстроки в строке нет!";
+	}
+	return 0;
+}
+
+int simpleSearch(string str, string substr) {
+	int N = str.length();
+	int n = substr.length();
+
+	for (int i = 0; i <= N - n; i++) {
+		bool flag = false;
+		int j = 0;
+		while (j < n && !false) {
+			flag = (str[i + j] == substr[j]);
+			j++;
+		}
+		if (flag) {
+			return i + 1;
+		}
+	}
+	return -1;
+}
