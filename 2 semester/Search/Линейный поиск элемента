@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+ 
+void linesearch(int* arr, int userkey, int arrsize) {
+
+  int findindex = 0;
+  for (int i = 0; i < arrsize; i++) {
+    if (arr[i] == userkey) {
+      findindex = i + 1;
+    }
+  }
+  if (findindex == 0) {
+    cout << "\nДанного ключа в массиве нет.";
+  }
+  else {
+    cout << "\nКлюч " << userkey << " находится на позиции " << findindex;
+  }
+}
+
+int main() {
+
+  system("chcp 1251 > null");
+
+
+  int size, key;
+  cout << "Введите размер массива: "; cin >> size;
+
+  int* userarr = new int[size];
+
+  for (int i = 0; i < size; i++) {
+      cout << "\nВведите " << i + 1 << " элемент: ";
+      cin >> userarr[i];
+  }
+  cout << "\nСформированный массив: ";
+  for (int i = 0; i < size; i++) {
+    cout << userarr[i] << " ";
+  }
+  cout << "\n\nВведите ключ: "; cin >> key;
+  linesearch(userarr, key, size);
+
+  return 0;
+}
