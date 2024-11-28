@@ -1,0 +1,56 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+void prepare(int* arr, string substring) {
+	for (int i = 0; i <= 127; i++) {
+		arr[i] = substring.length();
+	}
+	for (int i = 0; i < substring.length(); i++) {
+		arr[substring[i]] = substring.length() - i - 1;
+	}
+	if (arr[substring[substring.length() - 1]] == 0) {
+		arr[substring[substring.length() - 1]] = substring.length();
+	}
+}
+
+void BoyerMoore(int* arr, string str, string substr) {
+	int istr = substr.length() - 1;
+	int isub = substr.length() - 1;
+	bool flag = false;
+	while (istr <= str.length() && !flag) {
+		if (str[istr] == substr[isub] && isub == 0) {
+			flag = true;
+		}
+		else if (str[istr] == substr[isub]) {
+			istr--;
+			isub--;
+		}
+		else {
+			istr += arr[str[istr]];
+			isub = substr.length() - 1;
+		}
+	}
+	if (flag) {
+		cout << "Result: " << istr + 1;
+	}
+	else {
+		cout << "0";
+	}
+}
+
+int main() {
+	string str;
+	string substr;
+	cout << "Input string: ";
+	getline(cin, str);
+	cout << "Input substring: ";
+	getline(cin, substr);
+	int* table = new int[127];
+
+	prepare(table, substr);
+	BoyerMoore(table, str, substr);
+
+	return 0;
+}
+
