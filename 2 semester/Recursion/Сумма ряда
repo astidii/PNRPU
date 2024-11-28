@@ -1,0 +1,60 @@
+#include <iostream>
+#include <cmath>
+#include <chrono>
+using namespace std;
+
+double factorial(double n) {        //Факториал
+	if (n == 0) {
+		return 1;
+	}
+	else {
+		return n * factorial(n - 1);
+	}
+}
+double fun(double n, double x) {     //Сумма ряда рукурсией
+	if (n == -1) {  //Условие выхода из рекурсии
+		return 0;
+	}
+	else {
+		return ((pow(n, 2) + 1) / factorial(n) * pow((x / 2), n)) + fun(n - 1, x);
+	}
+}
+
+int main() {
+	
+	double n, x;
+	double sum = 0;
+	cin >> n >> x;
+	cout << endl;
+
+	auto start = chrono::steady_clock::now(); //начало отсчета
+
+	int cyc_fac = 0;
+	for (int i = 0; i <= n; i++) {
+		sum += ((pow(i, 2) + 1) / factorial(i) * pow((x / 2), i));
+	}
+
+	auto end = chrono::steady_clock::now(); //конец отсчета
+
+	cout << "Iteration result = " << sum << endl;
+	cout << "Iteration operation time in microseconds: "
+		<< chrono::duration_cast<chrono::microseconds>(end - start).count() /*вывод разницы между
+																			временем конца и начала отсчета*/
+		<< " us" << endl;
+
+
+
+	auto start1 = chrono::steady_clock::now();
+
+	cout << "Recursion result = " << fun(n, x) << endl;  //вызов рекурсии
+
+	auto end1 = chrono::steady_clock::now();
+
+	
+	cout << "Recursion operation time in microseconds: "
+		<< chrono::duration_cast<chrono::microseconds>(end1 - start1).count()
+		<< " us" << endl;
+
+
+	return 0;
+}
