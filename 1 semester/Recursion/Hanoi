@@ -1,0 +1,173 @@
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+// Глобальные переменные для хранения состояния башен
+int towers[3][10];    // три башни, максимум 10 дисков
+int heights[3];       // текущие высоты башен
+int numDisks;
+int stepCount = 0;
+
+// Функция для отрисовки одной линии башни
+void drawDiskLine(int diskSize, int maxWidth) {
+    if (diskSize == 0) {
+        // Пустое место - только стержень
+        cout << string(maxWidth, ' ') << "|" << string(maxWidth, ' ');
+    }
+    else {
+        // Диск
+        int width = diskSize;
+        int spaces = maxWidth - width;
+        cout << string(spaces, ' ') << string(width * 2 + 1, '=')
+            << string(spaces, ' ');
+    }
+}
+
+// Функция для отрисовки основания башни
+void drawBase(int maxWidth) {
+    string base = string(maxWidth * 2 + 1, '#');
+    cout << base << " " << base << " " << base << endl;
+}
+
+// Функция для отрисовки подписей башен
+void drawLabels(int maxWidth) {
+    cout << setw(maxWidth + 1) << "A"
+        << setw(maxWidth * 2 + 2) << "B"
+        << setw(maxWidth * 2 + 2) << "C" << endl;
+}
+
+// Функция для отображения текущего состояния башен
+void draw() {
+    system("cls");
+
+    cout << "Ханойская башня (шаг " << stepCount << ")\n" << endl;
+
+    int maxWidth = numDisks;
+
+    // Отрисовываем башни сверху вниз
+    for (int level = numDisks - 1; level >= 0; level--) {
+        for (int tower = 0; tower < 3; tower++) {
+            int diskSize = 0;
+            if (level < heights[tower]) {
+                diskSize = towers[tower][level];
+            }
+            drawDiskLine(diskSize, maxWidth);
+            if (tower < 2) cout << " ";
+        }
+        cout << endl;
+    }
+
+    // Отрисовываем основание и подписи
+    drawBase(maxWidth);
+    drawLabels(maxWidth);
+    cout << "\nНажмите Enter для следующего шага...";
+    cin.get();
+}
+
+// Функция перемещения диска
+void moveDisk(int from, int to) {
+    stepCount++;
+
+    if (heights[from] > 0) {
+        // Берем верхний диск с башни from
+        int disk = towers[from][heights[from] - 1];
+        heights[from]--; // уменьшаем высоту башни from
+
+        // Кладем диск на башню to
+        towers[to][heights[to]] = disk;
+        heights[to]++; // увеличиваем высоту башни to
+
+        draw();
+
+        cout << "Шаг " << stepCount << ": Перемещаем диск " << disk
+            << " с башни " << char('A' + from)
+            << " на башню " << char('A' + to) << endl;
+    }
+}
+
+// Рекурсивная функция решения Ханойской башни
+void hanoi(int n, int from, int to, int help) {
+    if (n == 1) {
+        // Перемещаем один диск
+        moveDisk(from, to);
+        return;
+    }
+
+    // Перемещаем n-1 дисков на вспомогательную башню
+    hanoi(n - 1, from, help, to);
+
+    // Перемещаем самый большой диск на целевую башню
+    moveDisk(from, to);
+
+    // Перемещаем n-1 дисков с вспомогательной на целевую башню
+    hanoi(n - 1, help, to, from);
+}
+
+// Инициализация башен
+void initializeTowers(int n) {
+    numDisks = n;
+
+    // Проверка ограничения
+    if (n < 1 || n > 10) {
+        cout << "Ошибка: количество дисков должно быть от 1 до 10!" << endl;
+        numDisks = 3; // значение по умолчанию
+    }
+
+    // Инициализируем высоты башен
+    heights[0] = numDisks; // первая башня заполнена
+    heights[1] = 0;        // остальные пустые
+    heights[2] = 0;
+
+    // Заполняем первую башню дисками (от большего к меньшему)
+    for (int i = 0; i < numDisks; i++) {
+        towers[0][i] = numDisks - i; // самый большой диск внизу
+    }
+
+    // Обнуляем остальные башни (для чистоты)
+    for (int i = 0; i < numDisks; i++) {
+        towers[1][i] = 0;
+        towers[2][i] = 0;
+    }
+}
+
+// Запуск решения
+void startSolution() {
+    cout << "Начальное состояние:" << endl;
+    draw();
+    cout << "Начинаем решение..." << endl;
+    cin.get();
+
+    hanoi(numDisks, 0, 2, 1); // перемещаем с башни A на башню C через B
+
+    cout << "\nРешение завершено! Всего шагов: " << stepCount << endl;
+}
+
+int main() {
+    int n;
+
+    while (true) {
+        cout << "Введите количество дисков (от 1 до 10): ";
+        cin >> n;
+        cin.ignore(); // очищаем буфер
+
+        if (n >= 1 && n <= 10) {
+            break; // корректное значение
+        }
+        else {
+            cout << "Некорректное значение! Пожалуйста, введите число от 1 до 10." << endl;
+        }
+    }
+
+    // Инициализируем башни
+    initializeTowers(n);
+
+    // Запускаем решение
+    startSolution();
+
+    cout << "\nНажмите Enter для выхода...";
+    cin.get();
+
+    return 0;
+}
