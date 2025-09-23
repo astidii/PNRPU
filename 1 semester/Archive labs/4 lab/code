@@ -1,0 +1,126 @@
+#include iostream
+#include cstdlib
+
+using namespace std;
+
+void FillRing(int array, int lenght) {
+	for (int i = 0; i  lenght; i++)
+	{
+		cout  Введите   i + 1  -й эллемент;
+		cin  array[i];
+	}
+}
+
+void PrintRing(int array,  int lenght){
+	for (int i = 0; i  lenght; i++)
+	{
+		if (i != lenght - 1)
+		{
+			cout  array[i]   - ;
+		}
+		else {
+			cout  array[i];
+		}
+	}
+	cout  endl;
+}
+
+void MoveRight(int array, int length) {
+	int lastElement = array[length - 1];
+	for (int i = length - 1; i  0; i--) {
+		array[i] = array[i - 1];
+	}
+	array[0] = lastElement;
+}
+
+
+void MoveLeft(int array, int length) {
+	int firstElement = array[0];
+	for (int i = 0; i  length - 1; i++) {
+		array[i] = array[i + 1];
+	}
+	array[length - 1] = firstElement;
+}
+
+void PrintRingLeft(int array, int length) {
+	int K;
+	cout  Введите начальный индекс K ;
+	cin  K;
+
+	for (int i = K; i  length; i++) {
+		cout  array[i];
+		if (i != length - 1  K  0) {
+			cout   - ;
+		}
+	}
+
+	for (int i = 0; i  K; i++) {
+		cout  array[i];
+		if (i != K - 1) {
+			cout   - ;
+		}
+	}
+	cout  endl;
+}
+
+
+void PrintRingRight(int array, int length) {
+	int K;
+	cout  Введите начальный индекс K ;
+	cin  K;
+
+	for (int i = K; i = 0; i--) {
+		cout  array[i];
+		if (i != 0  K  length - 1) { 
+			cout   - ;
+		}
+	}
+
+	for (int i = length - 1; i  K; i--) {
+		cout  array[i];
+		if (i != K + 1) { 
+			cout   - ;
+		}
+	}
+	cout  endl;
+}
+
+
+void AddZeroAfterMultiplesOfFive(int array, int& length) {
+
+	for (int i = 0; i  length; i++) {
+		if (array[i] % 5 == 0) {
+			for (int j = length; j  i; j--) {
+				array[j] = array[j - 1];
+			}
+			array[i + 1] = 0;
+			length++;
+			i++;
+		}
+	}
+}
+
+
+int main()
+{
+	system(chcp 1251  Null);
+	int ring[100];
+	int lenght;
+	cout  Введите длину массива ;
+	cin  lenght;
+
+
+	FillRing(ring, lenght);
+	
+	PrintRing(ring, lenght);
+
+	PrintRingLeft(ring, lenght);
+
+	PrintRingRight(ring, lenght);
+	
+	AddZeroAfterMultiplesOfFive(ring, lenght);
+
+	cout  Массив после добавления нулей   endl;
+	PrintRing(ring, lenght);
+	return 0;
+}
