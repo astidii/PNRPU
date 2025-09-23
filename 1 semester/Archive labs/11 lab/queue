@@ -1,0 +1,152 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+template <typename T>
+struct Node
+{
+	T data;
+	Node<T>* next;
+};
+
+template <typename T>
+struct Queue
+{
+	int size;
+	Node<T>* head;
+	Node<T>* tail;
+};
+
+template <typename T>
+void init_queue(Queue<T>& Q, const T& data)
+{
+	Node<T>* new_node = new Node<T>();
+	new_node->data = data;
+	Q.head = new_node;
+	Q.tail = new_node;
+	Q.size = 1;
+}
+
+
+template <typename T>
+void pushBack(Queue<T>& Q, const T& data)
+{
+	Node<T>* new_node = new Node<T>();
+	Q.size++;
+	new_node->data = data;
+	new_node->next = nullptr;
+	Q.tail->next = new_node;
+	Q.tail = new_node;
+}
+
+template <typename T>
+void new_queue(Queue<T>& Q, int n)
+{
+	T data;
+	cout << "Input elemnt: ";
+	cin >> data;
+	init_queue(Q, data);
+	for (int i = 2; i <= n; i++)
+	{
+		cout << "Input element: ";
+		cin >> data;
+		pushBack(Q, data);
+	}
+}
+
+
+template <typename T>
+void Pop(Queue<T>& Q)
+{
+	Node<T>* temp = Q.head;
+	Q.head = temp->next;
+	Q.size--;
+	delete temp;
+}
+
+template <typename T>
+void deleteElement(Queue<T>& Q, const T& key)
+{
+	for (int i = 1; i < Q.size; i++) {
+		if (Q.head->data != key) {
+			pushBack(Q, Q.head->data);
+			Pop(Q);
+		}
+		else {
+			Pop(Q);
+		}
+	}
+}
+
+template <typename T>
+void pushFront(Queue <T>& Q, const T& key)
+{
+	pushBack(Q, key);
+	print(Q);
+	for (int i = 1; i < Q.size; i++) {
+		pushBack(Q, Q.head->data);
+		Pop(Q);
+		print(Q);
+	}
+}
+
+template <typename T>
+void print(Queue <T>& Q)
+{
+	Node<T>* current_node = Q.head;
+	cout << "Start -> ";
+	while (current_node != nullptr) {
+		cout << current_node->data << " -> ";
+		current_node = current_node->next;
+	}
+	cout << "Final" << endl;
+}
+
+template <typename T>
+void clear(Queue<T>& Q) {
+	Node<T>* current_node = Q.head;
+	while (current_node != nullptr) {
+		Node<T>* temp = current_node;
+		current_node = current_node->next;
+		delete temp;
+	}
+	Q.head = nullptr;
+	Q.size = 0;
+}
+
+int main() {
+	Queue<string> MyQ;
+	int size;
+	int k;
+	string data;
+	cout << "Input size: ";
+	cout << endl;
+	cin >> size;
+
+	new_queue(MyQ, size);
+
+	print(MyQ);
+
+	cout << "Input k: ";
+	cin >> k;
+	cout << endl;
+	for(int i = 0; i < k; i++) {
+		cout << "Input elemnt: ";
+		cin >> data;
+		pushFront(MyQ, data);
+	}
+	for (int i = 0; i < k; i++) {
+		cout << "Input elemnt: ";
+		cin >> data;
+		pushBack(MyQ, data);
+		print(MyQ);
+	}
+
+	cout << "Input element for delete: ";
+	cin >> data;
+	deleteElement(MyQ, data);
+	print(MyQ);
+	clear(MyQ);
+}
+
