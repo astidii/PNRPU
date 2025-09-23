@@ -1,0 +1,21 @@
+#include <iostream>
+#include "progression.h"
+using namespace std;
+
+int main() {
+	system("chcp 1251 > Null");
+	double first;
+	int second;
+	cout << "Введите первый член прогрессии(дробное число): ";
+	cin >> first;
+	cout << "Введите постоянное отношение(целое число): ";
+	cin >> second;
+	
+	Progression prog(first, second);
+	
+	int j;
+	cout << "Введите номер члена прогрессии: ";
+	cin >> j;
+
+	cout << j << "-ый член прогрессии: " << prog.element(j) << endl;
+}
