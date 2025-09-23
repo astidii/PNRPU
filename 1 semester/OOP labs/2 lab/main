@@ -1,0 +1,31 @@
+#include <iostream>
+#include "salary.h"
+#include <string>
+using namespace std;
+
+int main(){
+	system("chcp 1251 > Null");
+
+	Salary p1("Дмитрий Асташин", 160000, 20);
+	p1.print();
+
+	Salary p2;
+	string p2_name;
+	double p2_salary;
+	int p2_prize;
+	cout << "Введите имя: ";
+	getline(cin, p2_name);
+	cout << "Введите зарплату: ";
+	cin >> p2_salary;
+	cout << "Введите % оклада: ";
+	cin >> p2_prize;
+	p2.setName(p2_name);
+	p2.setSalary(p2_salary);
+	p2.setPrize(p2_prize);
+	p2.print();
+
+	Salary p3;
+	p3.print();
+
+	return 0;
+}
