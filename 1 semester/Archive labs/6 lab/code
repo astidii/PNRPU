@@ -1,0 +1,73 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int ident(int s) {
+	if (s >= 65 && s <= 90) {
+		return 1;
+	}
+	else if (s >= 97 && s <= 122) {
+		return 1;
+	}
+	else if (s == 95) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int ident2(int s) {
+	if (s >= 65 && s <= 90) {
+		return 1;
+	}
+	else if (s >= 97 && s <= 122) {
+		return 1;
+	}
+	else if (s == 95) {
+		return 1;
+	}
+	else if (s >= 48 && s <= 57) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int main() {
+	string s;
+	string word;
+	getline(cin, s);
+	for (int i = 0; i <= s.length(); i++) {
+		if (s[i] != ' ' && s[i] != '\0') {
+			word += s[i];
+		}
+
+		else {
+			if (ident((int)word[0]) == 0) {
+				s.erase(i - word.length() - 1, word.length() + 1);
+				cout << s << endl;
+				i = i - word.length() - 1;
+				word = "";
+			}
+
+			else {
+				for (int j = 0; j < word.length(); j++) {
+					if (ident2((int)word[j]) == 0) {
+						s.erase(i - word.length() - 1, word.length() + 1);
+						cout << s << endl;
+						i = i - word.length();
+						word = "";
+					}
+				}
+				word = "";
+
+
+			}
+		}
+	}
+
+	cout << s << endl;
+	return 0;
+}
