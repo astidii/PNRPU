@@ -1,0 +1,4 @@
+﻿  main.cpp
+C:\Users\Asus\source\repos\Graphs\Graphs\main.cpp(36,11): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\Asus\source\repos\Graphs\Graphs\main.cpp(327,15): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Graphs.vcxproj -> C:\Users\Asus\source\repos\Graphs\x64\Debug\Graphs.exe
