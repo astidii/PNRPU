@@ -1,0 +1,14 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (ConsoleApplication2.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  main.cpp
+C:\Users\Asus\source\repos\ConsoleApplication2\ConsoleApplication2\tree.h(192,55): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+  (компиляция исходного файла "main.cpp")
+      C:\Users\Asus\source\repos\ConsoleApplication2\ConsoleApplication2\tree.h(192,55):
+      контекст создания экземпляра шаблона (сначала самый старый)
+          C:\Users\Asus\source\repos\ConsoleApplication2\ConsoleApplication2\main.cpp(10,11):
+          выполняется компиляция ссылки на экземпляр класс шаблон функции "Tree<int>"
+          C:\Users\Asus\source\repos\ConsoleApplication2\ConsoleApplication2\tree.h(184,29):
+          во время компиляции функции-члена класс шаблон "void Tree<int>::balanceTree(void)"
+              C:\Users\Asus\source\repos\ConsoleApplication2\ConsoleApplication2\main.cpp(203,29):
+              см. первую ссылку на "Tree<int>::balanceTree" в "consoleMenu"
+  
+  ConsoleApplication2.vcxproj -> C:\Users\Asus\source\repos\ConsoleApplication2\x64\Debug\BinaryTree.exe
