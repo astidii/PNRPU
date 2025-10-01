@@ -1,0 +1,7 @@
+﻿  graph_app.cpp
+C:\Users\Asus\source\repos\TSP\TSP\graph_app.cpp(116,41): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+C:\Users\Asus\source\repos\TSP\TSP\graph_app.cpp(116,38): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+C:\Users\Asus\source\repos\TSP\TSP\graph_app.cpp(129,24): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+C:\Users\Asus\source\repos\TSP\TSP\graph_app.cpp(129,21): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+C:\Users\Asus\source\repos\TSP\TSP\graph_app.cpp(394,39): warning C4267: return: преобразование из "size_t" в "int"; возможна потеря данных
+  TSP.vcxproj -> C:\Users\Asus\source\repos\TSP\x64\Debug\TSP.exe
