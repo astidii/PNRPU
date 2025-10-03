@@ -1,0 +1,361 @@
+#pragma once
+#include <iostream>
+using namespace std;
+
+const int MAX_SIZE = 10;
+
+class Error {
+
+public:
+
+    virtual void what() const{};
+};
+
+
+class IndexError : public Error {
+
+protected:
+
+    string message;
+
+public:
+
+    IndexError() { message = "Ошибка индекса.\n"; }
+    virtual void what() const { cout << message; }
+};
+
+
+class SizeError :public Error {
+
+protected:
+
+    string message;
+
+public:
+
+    SizeError() { message = "Ошибка размера.\n"; }
+    virtual void what() const { cout << message; }
+};
+
+
+class maxSizeError : public SizeError {
+
+protected:
+
+    string newMessagae;
+
+public:
+
+    maxSizeError() { SizeError(); newMessagae = "Размер списка больше, чем максимальный размер.\n"; }
+    virtual void what() const { cout << message << newMessagae; }
+};
+
+
+class emptySizeError : public SizeError {
+
+protected:
+
+    string newMessage;
+
+public:
+
+    emptySizeError() { SizeError(); newMessage = "Список пуст.\n"; }
+    virtual void what() const { cout << message << newMessage; }
+};
+
+
+class notSameSize : public SizeError {
+
+protected:
+
+    string newMessage;
+
+public:
+
+    notSameSize() { SizeError(); newMessage = "Списки разной длины.\n"; }
+    virtual void what() const { cout << message << newMessage; }
+};
+
+
+class negativeIndex : public IndexError {
+
+protected:
+
+    string someMessage;
+
+public:
+
+    negativeIndex() { IndexError(); someMessage = "Индекс меньше нуля.\n"; }
+    virtual void what() const { cout << message << someMessage; }
+};
+
+
+class ExceedingIndexError : public IndexError {
+
+protected:
+
+    string someMessage;
+
+public:
+
+    ExceedingIndexError() { IndexError(); someMessage = "Индекс превышает размер списка.\n"; }
+    virtual void what() const { cout << message << someMessage; }
+};
+
+
+
+
+struct Node
+{
+    Node* next = nullptr;
+    Node* prev = nullptr;
+    int data;
+};
+
+class List
+{
+public:
+    Node* head;
+    Node* tail;
+    int size;
+
+public:
+    List() { head = nullptr, tail = nullptr, size = 0; }
+    ~List() { Clear(); }
+
+
+    void push_back(int element)
+    {
+        
+        Node* new_node = new Node;
+        new_node->data = element;
+
+        if (head == nullptr)
+        {
+            head = new_node;
+            tail = new_node;
+        }
+
+        else
+        {
+            tail->next = new_node;
+            new_node->prev = tail;
+            tail = new_node;
+        }
+
+        size++;
+    }
+
+    void push_front(int element)
+    {
+       
+        Node* new_node = new Node;
+        new_node->data = element;
+
+        if (head == nullptr)
+        {
+            head = new_node;
+            tail = new_node;
+        }
+
+        else
+        {
+            new_node->next = head;
+            head->prev = new_node;
+            head = new_node;
+        }
+
+        size++;
+    }
+
+
+    void pop_back()
+    {
+        if (size == 0) { throw emptySizeError(); }
+        if (head == nullptr)
+        {
+            cout << "List is empty!";
+            return;
+        }
+
+        Node* temp_node;
+
+        if (head == tail)
+        {
+            temp_node = head;
+
+            head = nullptr;
+            tail = nullptr;
+        }
+
+        else
+        {
+            temp_node = tail;
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
+
+        delete temp_node;
+        size--;
+
+    }
+
+
+    void pop_front()
+    {
+        if (head == nullptr) { throw emptySizeError(); }
+
+        Node* temp_node;
+
+        if (head == tail)
+        {
+            temp_node = head;
+
+            head = nullptr;
+            tail = nullptr;
+        }
+
+        else
+        {
+            temp_node = head;
+            head = head->next;
+            head->prev = nullptr;
+        }
+
+        delete temp_node;
+        size--;
+
+    }
+
+
+    void Clear()
+    {
+        while (head != nullptr)
+        {
+            Node* temp_node = head;
+            head = head->next;
+            delete temp_node;
+        }
+
+        size = 0;
+    }
+
+    List operator*(const List& otherList)
+    {
+        List res;
+
+        Node* current_node1 = head;
+        Node* current_node2 = otherList.head;
+
+        while (current_node1 != nullptr && current_node2 != nullptr)
+        {
+            res.push_back(current_node1->data * current_node2->data);
+            current_node1 = current_node1->next;
+            current_node2 = current_node2->next;
+        }
+
+        return res;
+    }
+
+    int& operator [] (int index) {
+
+        if (index < 0) throw negativeIndex();
+        if (this->size == 0) throw emptySizeError();
+        if (index > this->size) throw ExceedingIndexError();
+
+        if (index < this->size && index >= 0) {
+            Node* current_node = this->head;
+            for (int i = 0; i != index; i++) {
+                current_node = current_node->next;
+            }
+            return current_node->data;
+        }
+        else {
+            cerr << "\nИндекс вышел за границы списка!\n";
+            exit(0);
+        }
+    }
+};
+
+
+
+ostream& operator<<(ostream& out, const List& list)
+{
+    if (list.size == 0)
+    {
+        cout << "\nList is empty!";
+    }
+
+    else
+    {
+        Node* current_node = list.head;
+        out << current_node->data;
+        current_node = current_node->next;
+
+        while (current_node != nullptr)
+        {
+            out << " " << current_node->data;
+            current_node = current_node->next;
+        }
+    }
+
+    cout << endl;
+
+    return out;
+}
+
+
+istream& operator>>(istream& in, List& list)
+{
+    list.Clear();
+
+    int size;
+
+    cout << "List size: ";
+    in >> size;
+
+    for (int i = 0; i < size; i++)
+    {
+        int data;
+        cout << "Input element " << i + 1 << ": ";
+        in >> data;
+        list.push_back(data);
+    }
+
+    return in;
+}
+
+
+
+int main() {
+    system("chcp 1251 > Null");
+
+    try {
+        List l;
+        int lSize; cout << "Введите размер списка: "; cin >> lSize;
+        if (lSize > MAX_SIZE) { throw maxSizeError(); }
+        for (int i = 0; i < lSize; i++) {
+            int data; cout << "Введите элемент " << i + 1 << ": "; cin >> data;
+            l.push_back(data);
+        }
+
+        int ind; cout << "Введите индекс элемента: "; cin >> ind;
+        cout << l[ind] << endl;
+        
+        cout << "Удаление элементов списка: " << endl;
+        cout << l;
+        l.pop_back();
+        cout << l;
+        l.pop_back();
+        cout << l;
+        l.pop_back();
+
+    }
+
+    catch (const Error& e)
+    {
+        e.what();
+    }
+
+    return 0;
+}
