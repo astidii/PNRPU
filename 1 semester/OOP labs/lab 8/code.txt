@@ -1,0 +1,387 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+const int evNothing = 0;
+const int evMessage = 100;
+
+const int cmCreate = 1;
+const int cmAdd = 2;
+const int cmDelete = 3;
+const int cmShow = 4;
+const int cmShowNames = 5;
+const int cmQuit = -1;
+
+struct TEvent {
+
+	int What;
+	int command;
+};
+
+
+class Object {
+
+public:
+
+	Object() {}
+
+	virtual ~Object() {}
+
+	virtual void Show(bool areNamesOnly = false) = 0;
+
+	virtual void InPut() = 0;
+
+	virtual string GetName() = 0;
+};
+
+class Print : public Object {
+
+protected:
+
+	string name;
+	string author;
+
+public:
+
+	Print() {};
+
+	Print(string name, string author) {
+
+		SetName(name);
+		SetAuthor(author);
+	}
+
+	void Show(bool areNamesOnly = false) override {
+
+		if (areNamesOnly) {
+
+			cout << GetName();
+			return;
+		}
+		cout << "\nНазвание: " << name << "\nАвтор: " << author;
+	}
+
+	void InPut() override {
+
+		cout << "\nВведите название: "; getline(cin, name);
+		cout << "\nВведите автора: "; getline(cin, author);
+		cout << endl;
+	}
+
+	string GetName() override { return name; }
+	string GetAuthor() { return author; }
+
+	void SetName(string Name) { name = Name; }
+	void SetAuthor(string Author) { author = Author; }
+
+	Print& operator=(Print& otherPrint) {
+
+		name = otherPrint.name;
+		author = otherPrint.author;
+
+		return *this;
+	}
+
+	virtual ~Print() {};
+
+};
+
+class Magazine : public Print {
+
+protected:
+
+	int pages;
+
+public:
+
+	Magazine() : Print() {};
+
+	Magazine(string name, string author, int pages) : Print(name, author) { SetPages(pages); }
+
+	void Show(bool areNamesOnly = false) override {
+
+		Print::Show(areNamesOnly);
+
+		if (!areNamesOnly) { cout << "\nКол-во страниц: " << pages; }
+
+	}
+
+	void InPut() override {
+
+		Print::InPut();
+		cout << "\nВведите кол-во страниц: "; cin >> pages;
+	}
+
+	int GetPages() { return pages; }
+
+	void SetPages(int Pages) { pages = Pages; }
+
+	Magazine& operator=(Magazine& otherMagazine) {
+
+		Print::operator=(otherMagazine);
+		pages = otherMagazine.pages;
+
+		return *this;
+	}
+
+	virtual ~Magazine() {};
+};
+
+class Vector {
+
+protected:
+
+	Object** elems;
+	int size;
+	int curSize;
+
+public:
+
+	Vector() { elems = 0; size = 0; curSize = 0; }
+
+	Vector(int size) {
+
+		elems = new Object * [size];
+
+		size = size;
+		curSize = 0;
+	}
+
+	void Create(int length) {
+
+		if (elems != 0) {
+
+			for (int i = 0; i < curSize; i++) { delete elems[i]; }
+			delete[] elems;
+		}
+
+		size = length;
+		elems = new Object * [length];
+		curSize = 0;
+
+	}
+
+	bool Add(Object* item) {
+
+		if (curSize >= size) {
+
+			cout << "\nОшибка:	нет места в группе\n";
+			return false;
+		}
+
+		elems[curSize++] = item;
+		return true;
+	}
+
+	bool Delete(string name) {
+
+		if (curSize == 0) {
+
+			cout << "\nГруппа пустая\n";
+			return false;
+		}
+
+		bool flag = false;
+
+		for (int i = 0; i < curSize && !flag; i++)
+		{
+			flag = elems[i]->GetName() == name;
+
+			if (flag) {
+
+				Object* temp = elems[i];
+
+				for (int j = i; j < curSize - 1; j++) {
+					elems[j] = elems[j + 1];
+				}
+
+				delete temp;
+				curSize--;
+			}
+		}
+
+		if (!flag) { cout << "\nТакого названия в группе нет\n"; }
+
+		return flag;
+	}
+
+	void Show(bool areNameOnly = false) {
+
+		if (curSize == 0) { cout << "\nПустая группа.\n"; }
+
+		elems[0]->Show(areNameOnly);
+
+		for (int i = 1; i < curSize; i++) {
+
+			cout << endl;
+			elems[i]->Show(areNameOnly);
+		}
+	}
+
+	virtual ~Vector() {
+
+		if (elems == 0) {
+			return;
+		}
+
+		for (int i = 0; i < curSize; i++) {
+			delete elems[i];
+		}
+		delete elems;
+
+		size = 0;
+		curSize = 0;
+	}
+};
+
+class Dialog : public Vector {
+
+protected:
+
+	bool isOver;
+
+public:
+
+	Dialog() { isOver = false; }
+
+	~Dialog() {};
+
+	void getEvent(TEvent& event) {
+
+		int choice;
+
+		cout << "\nВведите операцию: "; cin >> choice;
+
+		event.What = evMessage;
+
+		switch (choice)
+		{
+		case 1: event.command = cmCreate; break;
+		case 2: event.command = cmAdd; break;
+		case 3: event.command = cmDelete; break;
+		case 4: event.command = cmShow; break;
+		case 5: event.command = cmShowNames; break;
+		case -1: event.command = cmQuit; break;
+
+		default: event.What = evNothing;
+		}
+	}
+
+	void Execute() {
+
+		cout << "\n1 - Создать группу\n2 - Добавить элемент\n3 - Удалить элемент\n4 - Показать полную информацию\n5 - Показать название\n-1 - Выход из программы";
+
+		TEvent Event;
+
+		while (!isOver) {
+
+			getEvent(Event);
+			HandleEvent(Event);
+		}
+	}
+
+	void HandleEvent(TEvent& event) {
+
+		string Name;
+
+		if (event.What == evMessage) {
+
+			switch (event.command)
+			{
+			case cmCreate:
+
+				int sizeOfGroup;
+
+				do {
+					cout << "\nВведите размер группы: "; cin >> sizeOfGroup;
+					cout << endl;
+				} while (sizeOfGroup <= 0);
+
+				Create(sizeOfGroup);
+
+				break;
+
+			case cmAdd:
+
+				if (elems == 0) {
+
+					cout << "\nГруппа еще не создана.\n";
+					break;
+				}
+
+				int userChoice;
+
+				do {
+					cout << "\nВыберете: \n\t1 - Печатное издание\n\t2 - Книга";
+					cout << "\n\tВаш выбор: ";  cin >> userChoice;
+					cout << endl;
+				} while (userChoice != 1 && userChoice != 2);
+
+				cin.ignore();
+
+				if (userChoice == 1) {
+
+					Print* print = new Print;
+					print->InPut();
+
+					Add(print);
+				}
+				else {
+
+					Magazine* magazine = new Magazine;
+					magazine->InPut();
+
+					Add(magazine);
+				}
+				break;
+
+			case cmDelete:
+
+				if (elems == 0) { cout << "\nГруппа еще не создана.\n"; }
+
+				cin.ignore();
+
+				cout << "\nВведите название, которое хотите удалить: "; getline(cin, Name);
+				cout << endl;
+
+				Delete(Name);
+
+				break;
+
+			case cmShow:
+
+				Show();
+				cout << endl;
+				break;
+
+			case cmShowNames:
+
+				Show(true);
+				cout << endl;
+				break;
+
+			case cmQuit:
+
+				isOver = true;
+				break;
+
+			default:
+				break;
+			}
+
+			event.What = evNothing;
+		}
+	}
+};
+
+int main() {
+
+	system("chcp 1251 > Null");
+
+	Dialog D;
+	D.Execute();
+
+	return 0;
+
+}
